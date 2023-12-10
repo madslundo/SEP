@@ -1,0 +1,104 @@
+@page "/Total"
+@using Microsoft.EntityFrameworkCore
+@using EFC
+@inject SetupContext context
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Vær venlig at logge ind</h3>
+    </NotAuthorized>
+    <Authorized>
+        <div class="container mt-5">
+            <h3>Total</h3>
+            <br/>
+            <br/>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <p class="card-text">Totale Mængde Fejl: @total M.</p>
+                    <p class="card-text">Totale Mængde Skrot: @errors M.</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <p class="card-text">Det koster 28 EUR pr. meter skrot</p>
+                    <p class="card-text">Totale omkostninger for skrot: @errorCost EUR.</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <p class="card-text">10% af skrotprodukterne er solgt, hvilket giver: @sold M. solgt</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <p class="card-text">Gennemsnitsmeter produceret pr. fejl: @totalMetersBetween M.</p>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-body">
+                    <p class="card-text">Totale mængde af produkter med en længde under minimumslængden: @shortyCount</p>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private int tjek;
+    private int total;
+    private double errorCost;
+    private double errors;
+    private double sold;
+    private int totalMetersBetween;
+    private int totalCounts;
+    private int shorty;
+    private int shortyCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tjek = await context.Datas.CountAsync();
+        await Sum();
+        await MetersBetweenFailure();
+        await TooShort();
+    }
+
+
+    private async Task Sum()
+    {
+        var sum = await context.Datas
+            .Select(data => data.Meters)
+            .SumAsync();
+        total = sum;
+        errors = sum * 0.5;
+        errorCost = errors * 28;
+        sold = sum * 0.1;
+    }
+
+    private async Task MetersBetweenFailure()
+    {
+        var meters = await context.CompleteDatas
+            .Select(data => data.Meters)
+            .SumAsync();
+
+        var TotalCount = await context.Datas
+            .ToListAsync();
+        totalCounts = TotalCount.Count;
+
+        totalMetersBetween = meters / totalCounts;
+    }
+
+    private async Task TooShort()
+    {
+        var data = await context.Datas.ToListAsync();
+
+        var total = data
+            .Where(data => data.Meters < 58)
+            .ToList();
+        shortyCount = total.Count;
+    }
+
+}

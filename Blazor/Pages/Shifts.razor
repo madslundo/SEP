@@ -1,0 +1,406 @@
+@page "/Shifts"
+@using Microsoft.EntityFrameworkCore
+@using EFC
+@inject SetupContext context
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Vær venlig at logge ind</h3>
+    </NotAuthorized>
+    <Authorized>
+        <div class="container mt-5">
+            <h3>Arbejdshold</h3>
+            <br/>
+            <br/>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Arbejdstid</th>
+                    <th>Totale Antal Fejl</th>
+                    <th>Håndteringsfejl</th>
+                    <th>Håndteringsskade</th>
+                    <th>Længdefejl</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>15:00-23:00</td>
+                    <td>@aften</td>
+                    <td>@aftenHaandtFe</td>
+                    <td>@aftenHaandter</td>
+                    <td>@aftenLaengde</td>
+                </tr>
+                <tr>
+                    <td>07:00-15:00</td>
+                    <td>@dag</td>
+                    <td>@dagHaandtFe</td>
+                    <td>@dagHaandter</td>
+                    <td>@dagLaengde</td>
+                </tr>
+                <tr>
+                    <td>23:00-07:00</td>
+                    <td>@nat</td>
+                    <td>@natHaandtFe</td>
+                    <td>@natHaandter</td>
+                    <td>@natLaengde</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table for hold1 and errors -->
+        <div class="container mt-5">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Hold 1: Antal Fejl</th>
+                    <th>Håndteringsfejl</th>
+                    <th>Håndteringsskade</th>
+                    <th>Længdefejl</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>@hold1</td>
+                    <td>@hold1HaandtFe</td>
+                    <td>@hold1Haandter</td>
+                    <td>@hold1Laengde</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table for hold2 and errors -->
+        <div class="container mt-5">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Hold 2: Antal Fejl </th>
+                    <th>Håndteringsfejl</th>
+                    <th>Håndteringsskade</th>
+                    <th>Længdefejl</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>@hold2</td>
+                    <td>@hold2HaandtFe</td>
+                    <td>@hold2Haandter</td>
+                    <td>@hold2Laengde</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table for nathold and errors -->
+        <div class="container mt-5">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nathold: Antal Fejl</th>
+                    <th>Håndteringsfejl</th>
+                    <th>Håndteringsskade</th>
+                    <th>Længdefejl</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>@nat</td>
+                    <td>@natHaandtFe</td>
+                    <td>@natHaandter</td>
+                    <td>@natLaengde</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Total errors -->
+        <div>Total: @total</div>
+
+
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private int aften;
+    private int dag;
+    private int aften1;
+    private int dag1;
+    private int aften2;
+    private int dag2;
+    private int nat;
+    private int total;
+    private int tjek;
+    private int aftenHaandtFe;
+    private int aftenHaandter;
+    private int aftenLaengde;
+    private int natHaandtFe;
+    private int natHaandter;
+    private int natLaengde;
+    private int dagHaandtFe;
+    private int dagHaandter;
+    private int dagLaengde;
+    private int hold1;
+    private int hold2;
+    private int hold1HaandtFe;
+    private int dag1HaandtFe;
+    private int aften1HaandtFe;
+    private int hold1Haandter;
+    private int dag1Haandter;
+    private int aften1Haandter;
+    private int hold1Laengde;
+    private int dag1Laengde;
+    private int aften1Laengde;
+    private int hold2HaandtFe;
+    private int dag2HaandtFe;
+    private int aften2HaandtFe;
+    private int hold2Haandter;
+    private int dag2Haandter;
+    private int aften2Haandter;
+    private int hold2Laengde;
+    private int dag2Laengde;
+    private int aften2Laengde;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        tjek = await context.Datas.CountAsync();
+        await TimeCounterAften();
+        await TimeCounterDag();
+        await TimeCounterNat();
+        await TimeCounterTotal();
+        await TimeCounterHold1();
+        await TimeCounterHold2();
+    }
+
+    private async Task TimeCounterAften()
+    {
+        var dt = TimeOnly.Parse("23:00:00");
+        var dt2 = TimeOnly.Parse("15:00:00");
+        var data = await context.Datas.ToListAsync();
+
+        var count = data
+            .Where(data => data.DateTime.TimeOfDay <= dt.ToTimeSpan() && data.DateTime.TimeOfDay >= dt2.ToTimeSpan())
+            .ToList();
+        aften = count.Count;
+
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt.ToTimeSpan() && data.DateTime.TimeOfDay >= dt2.ToTimeSpan() && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        aftenHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt.ToTimeSpan() && data.DateTime.TimeOfDay >= dt2.ToTimeSpan() && data.Reason.Equals("Haandter"))
+            .ToList();
+        aftenHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt.ToTimeSpan() && data.DateTime.TimeOfDay >= dt2.ToTimeSpan() && data.Reason.Equals("Laengde"))
+            .ToList();
+        aftenLaengde = count3.Count;
+    }
+
+    private async Task TimeCounterNat()
+    {
+        var dt3 = TimeOnly.Parse("23:00:00");
+        var dt = TimeOnly.Parse("00:00:00");
+        var dt2 = TimeOnly.Parse("07:00:00");
+
+        var data = await context.Datas.ToListAsync();
+
+        var count = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan())
+            .ToList();
+        var nat1 = count.Count;
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan())
+            .ToList();
+        var nat2 = count1.Count();
+        nat = nat1 + nat2;
+
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        var nat3 = count2.Count;
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        var nat4 = count3.Count();
+        natHaandtFe = nat3 + nat4;
+
+        var count4 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Haandter"))
+            .ToList();
+        var nat5 = count4.Count;
+        var count5 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Reason.Equals("Haandter"))
+            .ToList();
+        var nat6 = count5.Count();
+        natHaandter = nat5 + nat6;
+
+        var count6 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Laengde"))
+            .ToList();
+        var nat7 = count6.Count;
+        var count7 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Reason.Equals("Laengde"))
+            .ToList();
+        var nat8 = count7.Count();
+        natLaengde = nat7 + nat8;
+    }
+
+    private async Task TimeCounterDag()
+    {
+        var dt = TimeOnly.Parse("07:00:00");
+        var dt2 = TimeOnly.Parse("15:00:00");
+        var data = await context.Datas.ToListAsync();
+
+        var count = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan())
+            .ToList();
+        dag = count.Count;
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        dagHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Haandter"))
+            .ToList();
+        dagHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Laengde"))
+            .ToList();
+        dagLaengde = count3.Count;
+    }
+
+
+    private async Task TimeCounterHold1()
+    {
+        var dt = TimeOnly.Parse("07:00:00");
+        var dt1 = TimeOnly.Parse("15:00:00");
+        var dt2 = TimeOnly.Parse("23:00:00");
+        var dt3 = TimeOnly.Parse("15:00:00");
+
+        var data = await context.Datas.ToListAsync();
+
+        var count = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0)
+            .ToList();
+        dag1 = count.Count;
+
+        var counts = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0)
+            .ToList();
+        aften1 = counts.Count;
+
+        hold1 = dag1 + aften1;
+
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        dag1HaandtFe = count1.Count;
+
+        var counts1 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        aften1HaandtFe = counts1.Count;
+
+        hold1HaandtFe = dag1HaandtFe + aften1HaandtFe;
+
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandter"))
+            .ToList();
+        dag1Haandter = count2.Count;
+
+        var counts2 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandter"))
+            .ToList();
+        aften1Haandter = counts2.Count;
+
+        hold1Haandter = dag1Haandter + aften1Haandter;
+
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Laengde"))
+            .ToList();
+        dag1Laengde = count3.Count;
+
+        var counts3 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Laengde"))
+            .ToList();
+        aften1Laengde = counts3.Count;
+
+        hold1Laengde = dag1Laengde + aften1Laengde;
+    }
+
+
+    private async Task TimeCounterHold2()
+    {
+        var dt = TimeOnly.Parse("07:00:00");
+        var dt1 = TimeOnly.Parse("15:00:00");
+        var dt2 = TimeOnly.Parse("23:00:00");
+        var dt3 = TimeOnly.Parse("15:00:00");
+        var data = await context.Datas.ToListAsync();
+
+        var count = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 1)
+            .ToList();
+        dag2 = count.Count;
+
+
+        var counts = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 1)
+            .ToList();
+        aften2 = counts.Count;
+
+        hold2 = dag2 + aften2;
+
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 1 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        dag2HaandtFe = count1.Count;
+
+        var counts1 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 1 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        aften2HaandtFe = counts1.Count;
+
+        hold2HaandtFe = dag2HaandtFe + aften2HaandtFe;
+
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 1 && data.Reason.Equals("Haandter"))
+            .ToList();
+        dag2Haandter = count2.Count;
+
+        var counts2 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 1 && data.Reason.Equals("Haandter"))
+            .ToList();
+        aften2Haandter = counts2.Count;
+
+        hold2Haandter = dag2Haandter + aften2Haandter;
+
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 1 && data.Reason.Equals("Laengde"))
+            .ToList();
+        dag2Laengde = count3.Count;
+
+        var counts3 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 1 && data.Reason.Equals("Laengde"))
+            .ToList();
+        aften2Laengde = counts3.Count;
+
+        hold2Laengde = dag2Laengde + aften2Laengde;
+    }
+
+    private async Task TimeCounterTotal()
+    {
+        var dt = TimeOnly.Parse("00:00:00");
+        var dt2 = TimeOnly.Parse("23:59:59");
+        var data = await context.Datas.ToListAsync();
+
+        var count = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan())
+            .ToList();
+        total = count.Count;
+    }
+
+
+
+}

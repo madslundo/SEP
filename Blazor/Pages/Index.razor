@@ -1,0 +1,42 @@
+﻿@page "/"
+@using EFC
+@inject SetupContext context
+<PageTitle>Hjem</PageTitle>
+
+
+<AuthorizeView>
+    <Authorized>
+        <div>
+            <img class="forsidelogo" src="LogoForside.png" alt="Company logo" height="200" width="150"/>
+        </div>
+        <h5>Velkommen til dataene for Fiberlines produktionsmaskiner.</h5>
+        <br/>
+        <br/>
+
+        <div class="card">
+            <h3>Velkommen, @context.User.Identity.Name</h3>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div>
+            <img class="forsidelogo" src="LogoForside.png" alt="Company logo" height="200" width="150"/>
+        </div>
+        <h5>Du skal nu logge ind for at få dataene for Fiberlines produktionsmaskiner.</h5>
+        <br/>
+        <br/>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="Login">
+                <button class="loginbtn" aria-hidden="true">Log ind</button>
+            </NavLink>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+}

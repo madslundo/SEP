@@ -1,0 +1,969 @@
+@page "/Machines"
+@using Microsoft.EntityFrameworkCore
+@using EFC
+@inject SetupContext context
+
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Vær venlig at logge ind</h3>
+    </NotAuthorized>
+    <Authorized>
+        <div class="container mt-5">
+            <h3>Fejl pr. Maskine</h3>
+            <br/>
+            <br/>
+            <div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Maskine</th>
+                        <th>Spor</th>
+                        <th>Menneskefejl</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Maskine 01B</td>
+                        <td>Spor 1</td>
+                        <td>@m1a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 01B</td>
+                        <td>Spor 2</td>
+                        <td>@m1b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 01B</td>
+                        <td>Spor 3</td>
+                        <td>@m1c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 01B</td>
+                        <td>Spor 4</td>
+                        <td>@m1d </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 02A</td>
+                        <td>Spor 1</td>
+                        <td>@m2a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 02A</td>
+                        <td>Spor 4</td>
+                        <td>@m2b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 02B</td>
+                        <td>Spor 1</td>
+                        <td>@m2c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 02B</td>
+                        <td>Spor 4</td>
+                        <td>@m2d </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 03</td>
+                        <td>Spor 1</td>
+                        <td>@m3a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 03</td>
+                        <td>Spor 2</td>
+                        <td>@m3b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 03</td>
+                        <td>Spor 4</td>
+                        <td>@m3c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 06A</td>
+                        <td>Spor 2</td>
+                        <td>@m6b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 06A</td>
+                        <td>Spor 3</td>
+                        <td>@m6c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 07A</td>
+                        <td>Spor 1</td>
+                        <td>@m7a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 07A</td>
+                        <td>Spor 2</td>
+                        <td>@m7b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 07A</td>
+                        <td>Spor 3</td>
+                        <td>@m7c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 07A</td>
+                        <td>Spor 4</td>
+                        <td>@m7d </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 08A</td>
+                        <td>Spor 1</td>
+                        <td>@m8a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 08A</td>
+                        <td>Spor 2</td>
+                        <td>@m8b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 08A</td>
+                        <td>Spor 3</td>
+                        <td>@m8c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 08A</td>
+                        <td>Spor 4</td>
+                        <td>@m8d </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 09A</td>
+                        <td>Spor 1</td>
+                        <td>@m9a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 09A</td>
+                        <td>Spor 2</td>
+                        <td>@m9b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 09A</td>
+                        <td>Spor 3</td>
+                        <td>@m9c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 09A</td>
+                        <td>Spor 4</td>
+                        <td>@m9d </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 10A</td>
+                        <td>Spor 1</td>
+                        <td>@m10a </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 10A</td>
+                        <td>Spor 2</td>
+                        <td>@m10b </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 10A</td>
+                        <td>Spor 3</td>
+                        <td>@m10c </td>
+                    </tr>
+                    <tr>
+                        <td>Maskine 10A</td>
+                        <td>Spor 4</td>
+                        <td>@m10d </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private int tjek;
+    private int m1a;
+    private int m1aHaandtFe;
+    private int m1aHaandter;
+    private int m1aLaengde;
+    private int m1b;
+    private int m1bHaandtFe;
+    private int m1bHaandter;
+    private int m1bLaengde;
+    private int m1c;
+    private int m1cHaandtFe;
+    private int m1cHaandter;
+    private int m1cLaengde;
+    private int m1d;
+    private int m1dHaandtFe;
+    private int m1dHaandter;
+    private int m1dLaengde;
+    private int m2a;
+    private int m2aHaandtFe;
+    private int m2aHaandter;
+    private int m2aLaengde;
+    private int m2b;
+    private int m2bHaandtFe;
+    private int m2bHaandter;
+    private int m2bLaengde;
+    private int m2c;
+    private int m2cHaandtFe;
+    private int m2cHaandter;
+    private int m2cLaengde;
+    private int m2d;
+    private int m2dHaandtFe;
+    private int m2dHaandter;
+    private int m2dLaengde;
+    private int m3a;
+    private int m3aHaandtFe;
+    private int m3aHaandter;
+    private int m3aLaengde;
+    private int m3b;
+    private int m3bHaandtFe;
+    private int m3bHaandter;
+    private int m3bLaengde;
+    private int m3c;
+    private int m3cHaandtFe;
+    private int m3cHaandter;
+    private int m3cLaengde;
+    private int m6b;
+    private int m6bHaandtFe;
+    private int m6bHaandter;
+    private int m6bLaengde;
+    private int m6c;
+    private int m6cHaandtFe;
+    private int m6cHaandter;
+    private int m6cLaengde;
+    private int m7a;
+    private int m7aHaandtFe;
+    private int m7aHaandter;
+    private int m7aLaengde;
+    private int m7b;
+    private int m7bHaandtFe;
+    private int m7bHaandter;
+    private int m7bLaengde;
+    private int m7c;
+    private int m7cHaandtFe;
+    private int m7cHaandter;
+    private int m7cLaengde;
+    private int m7d;
+    private int m7dHaandtFe;
+    private int m7dHaandter;
+    private int m7dLaengde;
+    private int m8a;
+    private int m8aHaandtFe;
+    private int m8aHaandter;
+    private int m8aLaengde;
+    private int m8b;
+    private int m8bHaandtFe;
+    private int m8bHaandter;
+    private int m8bLaengde;
+    private int m8c;
+    private int m8cHaandtFe;
+    private int m8cHaandter;
+    private int m8cLaengde;
+    private int m8d;
+    private int m8dHaandtFe;
+    private int m8dHaandter;
+    private int m8dLaengde;
+    private int m9a;
+    private int m9aHaandtFe;
+    private int m9aHaandter;
+    private int m9aLaengde;
+    private int m9b;
+    private int m9bHaandtFe;
+    private int m9bHaandter;
+    private int m9bLaengde;
+    private int m9c;
+    private int m9cHaandtFe;
+    private int m9cHaandter;
+    private int m9cLaengde;
+    private int m9d;
+    private int m9dHaandtFe;
+    private int m9dHaandter;
+    private int m9dLaengde;
+    private int m10a;
+    private int m10aHaandtFe;
+    private int m10aHaandter;
+    private int m10aLaengde;
+    private int m10b;
+    private int m10bHaandtFe;
+    private int m10bHaandter;
+    private int m10bLaengde;
+    private int m10c;
+    private int m10cHaandtFe;
+    private int m10cHaandter;
+    private int m10cLaengde;
+    private int m10d;
+    private int m10dHaandtFe;
+    private int m10dHaandter;
+    private int m10dLaengde;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        tjek = await context.Datas.CountAsync();
+        await Machine1A();
+        await Machine1B();
+        await Machine1C();
+        await Machine1D();
+        await Machine2A();
+        await Machine2A4();
+        await Machine2C();
+        await Machine2D();
+        await Machine3A();
+        await Machine3B();
+        await Machine3C();
+        await Machine6B();
+        await Machine6C();
+        await Machine7A();
+        await Machine7B();
+        await Machine7C();
+        await Machine7D();
+        await Machine8A();
+        await Machine8B();
+        await Machine8C();
+        await Machine8D();
+        await Machine9A();
+        await Machine9B();
+        await Machine9C();
+        await Machine9D();
+        await Machine10A();
+        await Machine10B();
+        await Machine10C();
+        await Machine10D();
+    }
+
+    private async Task Machine1A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m1aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m1aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m1aLaengde = count3.Count;
+
+
+        m1a = m1aHaandter + m1aHaandtFe + m1aLaengde;
+    }
+
+    private async Task Machine1B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m1bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m1bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m1bLaengde = count3.Count;
+
+
+        m1b = m1bHaandter + m1bHaandtFe + m1bLaengde;
+    }
+
+    private async Task Machine1C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m1cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m1cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m1cLaengde = count3.Count;
+
+
+        m1c = m1cHaandter + m1cHaandtFe + m1cLaengde;
+    }
+
+    private async Task Machine1D()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m1dHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m1dHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m1dLaengde = count3.Count;
+
+
+        m1d = m1dHaandter + m1dHaandtFe + m1dLaengde;
+    }
+
+    private async Task Machine2A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m2aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m2aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m2aLaengde = count3.Count;
+
+
+        m2a = m2aHaandter + m2aHaandtFe + m2aLaengde;
+    }
+
+    private async Task Machine2A4()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m2bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m2bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m2bLaengde = count3.Count;
+
+
+        m2b = m2bHaandter + m2bHaandtFe + m2bLaengde;
+    }
+
+    private async Task Machine2C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 02B spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m2cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 02B spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m2cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 02B spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m2cLaengde = count3.Count;
+
+
+        m2c = m2cHaandter + m2cHaandtFe + m2cLaengde;
+    }
+
+    private async Task Machine2D()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m2dHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m2dHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m2dLaengde = count3.Count;
+
+
+        m2d = m2dHaandter + m2dHaandtFe + m2dLaengde;
+    }
+
+    private async Task Machine3A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m3aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m3aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m3aLaengde = count3.Count;
+
+
+        m3a = m3aHaandter + m3aHaandtFe + m3aLaengde;
+    }
+
+    private async Task Machine3B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m3bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m3bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m3bLaengde = count3.Count;
+
+
+        m3b = m3bHaandter + m3bHaandtFe + m3bLaengde;
+    }
+
+    private async Task Machine3C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m3cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m3cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 3 spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m3cLaengde = count3.Count;
+
+
+        m3c = m3cHaandter + m3cHaandtFe + m3cLaengde;
+    }
+
+    private async Task Machine6B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m6bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m6bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m6bLaengde = count3.Count;
+
+
+        m6b = m6bHaandter + m6bHaandtFe + m6bLaengde;
+    }
+
+    private async Task Machine6C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A spor 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m6cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A spor 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m6cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A spor 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m6cLaengde = count3.Count;
+
+
+        m6c = m6cHaandter + m6cHaandtFe + m6cLaengde;
+    }
+
+    private async Task Machine7A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m7aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m7aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m7aLaengde = count3.Count;
+
+
+        m7a = m7aHaandter + m7aHaandtFe + m7aLaengde;
+    }
+
+    private async Task Machine7B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m7bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m7bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m7bLaengde = count3.Count;
+
+
+        m7b = m7bHaandter + m7bHaandtFe + m7bLaengde;
+    }
+
+    private async Task Machine7C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m7cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m7cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m7cLaengde = count3.Count;
+
+
+        m7c = m7cHaandter + m7cHaandtFe + m7cLaengde;
+    }
+
+    private async Task Machine7D()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m7dHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m7dHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m7dLaengde = count3.Count;
+
+
+        m7d = m7dHaandter + m7dHaandtFe + m7dLaengde;
+    }
+
+    private async Task Machine8A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m8aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m8aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m8aLaengde = count3.Count;
+
+
+        m8a = m8aHaandter + m8aHaandtFe + m8aLaengde;
+    }
+
+    private async Task Machine8B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m8bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m8bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m8bLaengde = count3.Count;
+
+
+        m8b = m8bHaandter + m8bHaandtFe + m8bLaengde;
+    }
+
+    private async Task Machine8C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m8cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m8cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m8cLaengde = count3.Count;
+
+
+        m8c = m8cHaandter + m8cHaandtFe + m8cLaengde;
+    }
+
+    private async Task Machine8D()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m8dHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m8dHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m8dLaengde = count3.Count;
+
+
+        m8d = m8dHaandter + m8dHaandtFe + m8dLaengde;
+    }
+
+    private async Task Machine9A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m9aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m9aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m9aLaengde = count3.Count;
+
+
+        m9a = m9aHaandter + m9aHaandtFe + m9aLaengde;
+    }
+
+    private async Task Machine9B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m9bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m9bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m9bLaengde = count3.Count;
+
+
+        m9b = m9bHaandter + m9bHaandtFe + m9bLaengde;
+    }
+
+    private async Task Machine9C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m9cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m9cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m9cLaengde = count3.Count;
+
+
+        m9c = m9cHaandter + m9cHaandtFe + m9cLaengde;
+    }
+
+    private async Task Machine9D()
+    {
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m9dHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m9dHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m9dLaengde = count3.Count;
+
+
+        m9d = m9dHaandter + m9dHaandtFe + m9dLaengde;
+    }
+
+    private async Task Machine10A()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 1") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m10aHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 1") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m10aHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 1") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m10aLaengde = count3.Count;
+
+
+        m10a = m10aHaandter + m10aHaandtFe + m10aLaengde;
+    }
+
+    private async Task Machine10B()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 2") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m10bHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 2") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m10bHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 2") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m10bLaengde = count3.Count;
+
+
+        m10b = m10bHaandter + m10bHaandtFe + m10bLaengde;
+    }
+
+    private async Task Machine10C()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m10cHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m10cHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m10cLaengde = count3.Count;
+
+
+        m10c = m10cHaandter + m10cHaandtFe + m10cLaengde;
+    }
+
+    private async Task Machine10D()
+    {
+        var data = await context.Datas.ToListAsync();
+
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 4") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m10dHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 4") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m10dHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A spor 4") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m10dLaengde = count3.Count;
+
+
+        m10d = m10dHaandter + m10dHaandtFe + m10dLaengde;
+    }
+
+}

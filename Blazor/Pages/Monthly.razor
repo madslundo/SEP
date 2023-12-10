@@ -1,0 +1,138 @@
+@page "/Monthly"
+@using Microsoft.EntityFrameworkCore
+@using EFC
+@inject SetupContext context
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Vær venlig at logge ind</h3>
+    </NotAuthorized>
+    <Authorized>
+        <div class="container mt-5">
+            <h3>Måndelig Antal Fejl</h3>
+            <br/>
+            <br/>
+            <div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Måned</th>
+                        <th>Antal Fejl</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Juni</td>
+                        <td>@juni</td>
+                    </tr>
+                    <tr>
+                        <td>Juli</td>
+                        <td>@juli</td>
+                    </tr>
+                    <tr>
+                        <td>August</td>
+                        <td>@august</td>
+                    </tr>
+                    <tr>
+                        <td>September</td>
+                        <td>@september</td>
+                    </tr>
+                    <tr>
+                        <td>Oktober</td>
+                        <td>@oktober</td>
+                    </tr>
+                    <tr>
+                        <th>Total</th>
+                        <th>@total</th>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private int juni;
+    private int juli;
+    private int august;
+    private int september;
+    private int oktober;
+    private int total;
+
+    private int tjek;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tjek = await context.Datas.CountAsync();
+
+        await TimeCounterJuni();
+        await TimeCounterJuli();
+        await TimeCounterAugust();
+        await TimeCounterSeptember();
+        await TimeCounterOktober();
+        await TimeCounterTotal();
+    }
+
+    private async Task TimeCounterJuni()
+    {
+        var dt = DateTime.Parse("2023-06-01 00:00");
+        var dt2 = DateTime.Parse("2023-06-30 23:59");
+        var count = await context.Datas.Where(
+            data => data.DateTime >= dt && data.DateTime <= dt2)
+            .ToListAsync();
+        juni = count.Count;
+    }
+
+    private async Task TimeCounterJuli()
+    {
+        var dt = DateTime.Parse("2023-07-01 00:00");
+        var dt2 = DateTime.Parse("2023-07-31 23:59");
+        var count = await context.Datas.Where(
+            data => data.DateTime >= dt && data.DateTime <= dt2)
+            .ToListAsync();
+        juli = count.Count;
+    }
+
+    private async Task TimeCounterAugust()
+    {
+        var dt = DateTime.Parse("2023-08-01 00:00");
+        var dt2 = DateTime.Parse("2023-08-31 23:59");
+        var count = await context.Datas.Where(
+            data => data.DateTime >= dt && data.DateTime <= dt2)
+            .ToListAsync();
+        august = count.Count;
+    }
+
+    private async Task TimeCounterSeptember()
+    {
+        var dt = DateTime.Parse("2023-09-01 00:00");
+        var dt2 = DateTime.Parse("2023-09-30 23:59");
+        var count = await context.Datas.Where(
+            data => data.DateTime >= dt && data.DateTime <= dt2)
+            .ToListAsync();
+        september = count.Count;
+    }
+
+    private async Task TimeCounterOktober()
+    {
+        var dt = DateTime.Parse("2023-10-01 00:00");
+        var dt2 = DateTime.Parse("2023-10-31 23:59");
+        var count = await context.Datas.Where(
+            data => data.DateTime >= dt && data.DateTime <= dt2)
+            .ToListAsync();
+        oktober = count.Count;
+    }
+
+    private async Task TimeCounterTotal()
+    {
+        var dt = DateTime.Parse("2023-06-01 00:00");
+        var dt2 = DateTime.Parse("2023-10-31 23:59");
+        var count = await context.Datas.Where(
+            data => data.DateTime >= dt && data.DateTime <= dt2)
+            .ToListAsync();
+        total = count.Count;
+    }
+
+}

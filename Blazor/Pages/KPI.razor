@@ -1,0 +1,716 @@
+@page "/KPI"
+@using Microsoft.EntityFrameworkCore
+@using EFC
+@inject SetupContext context
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Vær venlig at logge ind</h3>
+        <!--
+        
+        @foreach (var item in kpi.Zip(maskine, (k, m) => new { KpiValue = k, MaskineValue = m }))
+        {
+            <div>
+                <p>KPI Value: @item.KpiValue %</p>
+                <p>Maskine Value: @item.MaskineValue</p>
+                <br/>
+            </div>
+        }
+        
+        
+        @foreach (var item in shiftKpi.Zip(hold, (k, m) => new { shiftKpiValue = k, holdValue = m }))
+        {
+            <div>
+                <p>hold KPI Value: @item.shiftKpiValue %</p>
+                <p>hold Value: @item.holdValue</p>
+                <br/>
+            </div>
+        }
+        -->
+
+    </NotAuthorized>
+    <Authorized>
+        <div class="container mt-5">
+
+            <h3>KPI Tabel For Menneskefejl pr. Maskine</h3>
+            <br/>
+            <br/>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Fejlprocent > 6%</th>
+                    <th>Maskine</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in kpi.Zip(maskine, (k, m) => new { KpiValue = k, MaskineValue = m }))
+                {
+                    <tr>
+                        <td class="kpi">@item.KpiValue %</td>
+                        <td>@item.MaskineValue</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+            <br/>
+            <br/>
+        </div>
+        <!-- Second Table for shiftKpi and hold -->
+
+        <div class="container mt-5">
+            <h3>Tabel For Menneskefejl pr. Hold</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Fejlprocent > 6%</th>
+                    <th>Hold</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in shiftKpi.Zip(hold, (k, m) => new { ShiftKpiValue = k, HoldValue = m }))
+                {
+                    <tr>
+                        <td class="kpi">@item.ShiftKpiValue %</td>
+                        <td>@item.HoldValue</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private int tjek;
+    private int m1;
+    private int m1HaandtFe;
+    private int m1Haandter;
+    private int m1Laengde;
+    private int m1fejl;
+    private int cm1;
+    private double pcm1;
+
+
+    private int m2A;
+    private int m2AHaandtFe;
+    private int m2AHaandter;
+    private int m2ALaengde;
+    private int m2Afejl;
+    private int cm2A;
+    private double pcm2A;
+
+    private int m2B;
+    private int m2BHaandtFe;
+    private int m2BHaandter;
+    private int m2BLaengde;
+    private int m2Bfejl;
+    private int cm2B;
+    private double pcm2B;
+
+    private int m3;
+    private int m3HaandtFe;
+    private int m3Haandter;
+    private int m3Laengde;
+    private int m3fejl;
+    private int cm3;
+    private double pcm3;
+
+    private int m6;
+    private int m6HaandtFe;
+    private int m6Haandter;
+    private int m6Laengde;
+    private int m6fejl;
+    private int cm6;
+    private double pcm6;
+
+    private int m7;
+    private int m7HaandtFe;
+    private int m7Haandter;
+    private int m7Laengde;
+    private int m7fejl;
+    private int cm7;
+    private double pcm7;
+
+    private int m8;
+    private int m8HaandtFe;
+    private int m8Haandter;
+    private int m8Laengde;
+    private int m8fejl;
+    private int cm8;
+    private double pcm8;
+
+    private int m9;
+    private int m9HaandtFe;
+    private int m9Haandter;
+    private int m9Laengde;
+    private int m9fejl;
+    private int cm9;
+    private double pcm9;
+
+    private int m10;
+    private int m10HaandtFe;
+    private int m10Haandter;
+    private int m10Laengde;
+    private int m10fejl;
+    private int cm10;
+    private double pcm10;
+
+    private int aften;
+    private int dag;
+    private int aften1;
+    private int dag1;
+    private int aften2;
+    private int dag2;
+    private int nat;
+    private int total;
+    private int aftenHaandtFe;
+    private int aftenHaandter;
+    private int aftenLaengde;
+    private int natHaandtFe;
+    private int natHaandter;
+    private int natLaengde;
+    private int dagHaandtFe;
+    private int dagHaandter;
+    private int dagLaengde;
+    private int hold1;
+    private int hold2;
+    private int hold1HaandtFe;
+    private int dag1HaandtFe;
+    private int aften1HaandtFe;
+    private int hold1Haandter;
+    private int dag1Haandter;
+    private int aften1Haandter;
+    private int hold1Laengde;
+    private int dag1Laengde;
+    private int aften1Laengde;
+    private int hold2HaandtFe;
+    private int dag2HaandtFe;
+    private int aften2HaandtFe;
+    private int hold2Haandter;
+    private int dag2Haandter;
+    private int aften2Haandter;
+    private int hold2Laengde;
+    private int dag2Laengde;
+    private int aften2Laengde;
+    private double hold1Error;
+    private int hold1Total;
+    private double hold2Error;
+    private int hold2Total;
+    private int natHoldTotal;
+    private double natError;
+
+    private readonly List<double> error = new();
+    private readonly List<double> kpi = new();
+    private readonly List<string> maskine = new();
+    private readonly List<double> holdError = new();
+    private readonly List<double> shiftKpi = new();
+    private readonly List<string> hold = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        tjek = await context.Datas.CountAsync();
+        await Machine1();
+        await Machine2A();
+        await Machine2B();
+        await Machine3();
+        await Machine6();
+        await Machine7();
+        await Machine8();
+        await Machine9();
+        await Machine10();
+        await ErrorKPI();
+        await TimeCounterHold1();
+        await TimeCounterHold2();
+        await TimeCounterNat();
+        await ShiftErrorKPI();
+    }
+
+
+    private async Task Machine1()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 1B"))
+            .ToList();
+        cm1 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m1HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m1Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 01B") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m1Laengde = count3.Count;
+        m1 = m1HaandtFe + m1Haandter + m1Laengde;
+        pcm1 = (double)m1 / cm1 * 100;
+        error.Add(pcm1);
+    }
+
+    private async Task Machine2A()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 2A"))
+            .ToList();
+        cm2A = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m2AHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m2AHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 02A") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m2ALaengde = count3.Count;
+        m2A = m2AHaandtFe + m2AHaandter + m2ALaengde;
+        pcm2A = (double)m2A / cm2A * 100;
+        error.Add(pcm2A);
+    }
+
+    private async Task Machine2B()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 2B"))
+            .ToList();
+        cm2B = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 02B") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m2BHaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 02B") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m2BHaandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 02B") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m2BLaengde = count3.Count;
+        m2B = m2BHaandtFe + m2BHaandter + m2BLaengde;
+        pcm2B = (double)m2B / cm2B * 100;
+        error.Add(pcm2B);
+    }
+
+    private async Task Machine3()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 3"))
+            .ToList();
+        cm3 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 3") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m3HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 3") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m3Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 3") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m3Laengde = count3.Count;
+        m3 = m3HaandtFe + m3Haandter + m3Laengde;
+        pcm3 = (double)m3 / cm3 * 100;
+        error.Add(pcm3);
+    }
+
+    private async Task Machine6()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 6A"))
+            .ToList();
+        cm6 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m6HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m6Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 06A") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m6Laengde = count3.Count;
+        m6 = m6HaandtFe + m6Haandter + m6Laengde;
+        pcm6 = (double)m6 / cm6 * 100;
+        error.Add(pcm6);
+    }
+
+    private async Task Machine7()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 7A"))
+            .ToList();
+        cm7 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m7HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m7Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 07A") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m7Laengde = count3.Count;
+        m7 = m7HaandtFe + m7Haandter + m7Laengde;
+        pcm7 = (double)m7 / cm7 * 100;
+        error.Add(pcm7);
+    }
+
+    private async Task Machine8()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 8A"))
+            .ToList();
+        cm8 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m8HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m8Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 08A") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m8Laengde = count3.Count;
+        m8 = m8HaandtFe + m8Haandter + m8Laengde;
+        pcm8 = (double)m8 / cm8 * 100;
+        error.Add(pcm8);
+    }
+
+    private async Task Machine9()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 9A"))
+            .ToList();
+        cm9 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m9HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m9Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 09A") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m9Laengde = count3.Count;
+        m9 = m9HaandtFe + m9Haandter + m9Laengde;
+        pcm9 = (double)m9 / cm9 * 100;
+        error.Add(pcm9);
+    }
+
+    private async Task Machine10()
+    {
+        var completeData = await context.CompleteDatas.ToListAsync();
+
+        var count = completeData
+            .Where(data => data.MachineId.Contains("Maskine 10A"))
+            .ToList();
+        cm10 = count.Count;
+        var data = await context.Datas.ToListAsync();
+
+        var count1 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A") && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        m10HaandtFe = count1.Count;
+        var count2 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A") && data.Reason.Equals("Haandter"))
+            .ToList();
+        m10Haandter = count2.Count;
+        var count3 = data
+            .Where(data => data.MachineId.Contains("Maskine 10A") && data.Reason.Equals("Laengde"))
+            .ToList();
+        m10Laengde = count3.Count;
+        m10 = m10HaandtFe + m10Haandter + m10Laengde;
+        pcm10 = (double)m10 / cm10 * 100;
+        error.Add(pcm10);
+    }
+
+    private async Task ErrorKPI()
+    {
+        for (var i = 0; i < error.Count; i++)
+        {
+            if (error[i] > 6)
+            {
+                kpi.Add(error[i]);
+                switch (i)
+                {
+                    case 0:
+                        maskine.Add("Maskine 1");
+                        break;
+                    case 1:
+                        maskine.Add("Maskine 2A");
+                        break;
+                    case 2:
+                        maskine.Add("Maskine 2B");
+                        break;
+                    case 3:
+                        maskine.Add("Maskine 3");
+                        break;
+                    case 4:
+                        maskine.Add("Maskine 6");
+                        break;
+                    case 5:
+                        maskine.Add("Maskine 7");
+                        break;
+                    case 6:
+                        maskine.Add("Maskine 8");
+                        break;
+                    case 7:
+                        maskine.Add("Maskine 9");
+                        break;
+                    case 8:
+                        maskine.Add("Maskine 10");
+                        break;
+                }
+            }
+        }
+    }
+
+    private async Task TimeCounterHold1()
+    {
+        var dt = TimeOnly.Parse("07:00:00");
+        var dt1 = TimeOnly.Parse("15:00:00");
+        var dt2 = TimeOnly.Parse("23:00:00");
+        var dt3 = TimeOnly.Parse("15:00:00");
+        var data = await context.Datas.ToListAsync();
+
+        var cdata = await context.CompleteDatas.ToListAsync();
+
+        var ccount = cdata.Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0)
+            .ToList();
+        dag1 = ccount.Count;
+
+        var ccount1 = cdata.Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0)
+            .ToList();
+        aften1 = ccount1.Count;
+
+        hold1 = dag1 + aften1;
+
+
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        dag1HaandtFe = count1.Count;
+
+        var counts1 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        aften1HaandtFe = counts1.Count;
+
+        hold1HaandtFe = dag1HaandtFe + aften1HaandtFe;
+
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandter"))
+            .ToList();
+        dag1Haandter = count2.Count;
+
+        var counts2 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandter"))
+            .ToList();
+        aften1Haandter = counts2.Count;
+
+        hold1Haandter = dag1Haandter + aften1Haandter;
+
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Laengde"))
+            .ToList();
+        dag1Laengde = count3.Count;
+
+        var counts3 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Laengde"))
+            .ToList();
+        aften1Laengde = counts3.Count;
+
+        hold1Laengde = dag1Laengde + aften1Laengde;
+
+        hold1Total = hold1Haandter + hold1HaandtFe + hold1Laengde;
+        hold1Error = (double)hold1Total / hold1 * 100;
+        holdError.Add(hold1Error);
+    }
+
+    private async Task TimeCounterHold2()
+    {
+        var dt = TimeOnly.Parse("07:00:00");
+        var dt1 = TimeOnly.Parse("15:00:00");
+        var dt2 = TimeOnly.Parse("23:00:00");
+        var dt3 = TimeOnly.Parse("15:00:00");
+        var data = await context.Datas.ToListAsync();
+
+        var cdata = await context.CompleteDatas.ToListAsync();
+
+        var ccount = cdata.Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 1)
+            .ToList();
+        dag2 = ccount.Count;
+
+        var ccount1 = cdata.Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 1)
+            .ToList();
+        aften2 = ccount1.Count;
+
+        hold2 = dag2 + aften2;
+
+
+        var count1 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        dag2HaandtFe = count1.Count;
+
+        var counts1 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        aften2HaandtFe = counts1.Count;
+
+        hold2HaandtFe = dag2HaandtFe + aften2HaandtFe;
+
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandter"))
+            .ToList();
+        dag2Haandter = count2.Count;
+
+        var counts2 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Haandter"))
+            .ToList();
+        aften2Haandter = counts2.Count;
+
+        hold2Haandter = dag2Haandter + aften2Haandter;
+
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt1.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Laengde"))
+            .ToList();
+        dag2Laengde = count3.Count;
+
+        var counts3 = data
+            .Where(data => data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Week % 2 == 0 && data.Reason.Equals("Laengde"))
+            .ToList();
+        aften2Laengde = counts3.Count;
+
+        hold2Laengde = dag2Laengde + aften2Laengde;
+
+        hold2Total = hold2Haandter + hold2HaandtFe + hold2Laengde;
+        hold2Error = (double)hold2Total / hold2 * 100;
+        holdError.Add(hold2Error);
+    }
+
+    private async Task TimeCounterNat()
+    {
+        var dt3 = TimeOnly.Parse("23:00:00");
+        var dt = TimeOnly.Parse("00:00:00");
+        var dt2 = TimeOnly.Parse("07:00:00");
+
+        var data = await context.Datas.ToListAsync();
+        var cdata = await context.CompleteDatas.ToListAsync();
+
+        var count = cdata
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan())
+            .ToList();
+        var nat1 = count.Count;
+        var count1 = cdata
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan())
+            .ToList();
+        var nat2 = count1.Count();
+        nat = nat1 + nat2;
+
+        var count2 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        var nat3 = count2.Count;
+        var count3 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Reason.Equals("Haandt Fe"))
+            .ToList();
+        var nat4 = count3.Count();
+        natHaandtFe = nat3 + nat4;
+
+        var count4 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Haandter"))
+            .ToList();
+        var nat5 = count4.Count;
+        var count5 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Reason.Equals("Haandter"))
+            .ToList();
+        var nat6 = count5.Count();
+        natHaandter = nat5 + nat6;
+
+        var count6 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt.ToTimeSpan() && data.DateTime.TimeOfDay <= dt2.ToTimeSpan() && data.Reason.Equals("Laengde"))
+            .ToList();
+        var nat7 = count6.Count;
+        var count7 = data
+            .Where(data => data.DateTime.TimeOfDay >= dt3.ToTimeSpan() && data.Reason.Equals("Laengde"))
+            .ToList();
+        var nat8 = count7.Count();
+        natLaengde = nat7 + nat8;
+
+        natHoldTotal = natHaandter + natHaandtFe + natLaengde;
+        natError = (double)natHoldTotal / nat * 100;
+        holdError.Add(natError);
+    }
+
+
+    private async Task ShiftErrorKPI()
+    {
+        for (var i = 0; i < holdError.Count; i++)
+        {
+            if (holdError[i] > 6)
+            {
+                shiftKpi.Add(holdError[i]);
+                switch (i)
+                {
+                    case 0:
+                        hold.Add("Hold 1");
+                        break;
+                    case 1:
+                        hold.Add("Hold 2");
+                        break;
+                    case 2:
+                        hold.Add("Nat holdet");
+                        break;
+                }
+            }
+        }
+    }
+
+
+}
